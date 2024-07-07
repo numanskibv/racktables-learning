@@ -1,0 +1,33 @@
+version: '3.7'
+
+services:
+  db:
+    image: mysql:5.7
+    container_name: racktables-db
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: racktables
+      MYSQL_USER: racktables
+      MYSQL_PASSWORD: racktablespassword
+
+  racktables:
+    build: .
+    container_name: racktables-app
+    ports:
+      - "443:443"
+    depends_on:
+      - db
+    restart: always
+    environment:
+      DB_HOST: db
+      DB_NAME: racktables
+      DB_USER: racktables
+      DB_PASSWORD: racktablespassword
+    volumes:
+      - ./ssl:/etc/ssl
+
+volumes:
+  db_data:
